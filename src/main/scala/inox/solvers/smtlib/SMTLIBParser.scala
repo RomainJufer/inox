@@ -8,7 +8,7 @@ import utils._
 
 import _root_.smtlib.lexer.{Tokens => LT, _}
 import _root_.smtlib.parser.Commands.{FunDef => SMTFunDef, _}
-import _root_.smtlib.parser.Terms.{Let => SMTLet, Forall => SMTForall, Identifier => SMTIdentifier, _}
+import _root_.smtlib.parser.Terms.{Let => SMTLet, Forall => SMTForall, Exists => SMTExists, Identifier => SMTIdentifier, _}
 import _root_.smtlib.theories._
 import _root_.smtlib.theories.experimental._
 import _root_.smtlib.extensions.tip.Terms.{Lambda => SMTLambda, Application => SMTApplication, _}
@@ -67,11 +67,10 @@ trait SMTLIBParser {
       val bindings = ((sv +: svs) zip vds).map(p => p._1.name -> p._2.toVariable)
       Forall(vds, fromSMT(term, BooleanType)(context.withVariables(bindings)))
 
-    case Exists(sv, svs, term) =>
+    case SMTExists(sv, svs, term) =>
       val vds = (sv +: svs).map(fromSMT)
       val bindings = ((sv +: svs) zip vds).map(p => p._1.name -> p._2.toVariable)
-      val body = fromSMT(term, BooleanType)(context.withVariables(bindings))
-      Not(Forall(vds, Not(body).setPos(body)))
+      Exists(vds, fromSMT(term, BooleanType)(context.withVariables(bindings)))
 
     case Core.ITE(cond, thenn, elze) =>
       IfExpr(fromSMT(cond, BooleanType), fromSMT(thenn, otpe), fromSMT(elze, otpe))

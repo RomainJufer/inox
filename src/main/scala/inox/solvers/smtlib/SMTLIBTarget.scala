@@ -15,6 +15,7 @@ import _root_.smtlib.parser.Commands.{
 }
 import _root_.smtlib.parser.Terms.{
   Forall => SMTForall,
+  Exists => SMTExists,
   Identifier => SMTIdentifier,
   Let => SMTLet,
   _
@@ -435,6 +436,8 @@ trait SMTLIBTarget extends SMTLIBParser with Interruptible with ADTManagers {
         else FunctionApplication(fun, sub.map(toSMT))
       case Forall(vs, bd) =>
         quantifiedTerm(SMTForall, vs, bd)(Map())
+      case Exists(vs, bd) =>
+        quantifiedTerm(SMTExists, vs, bd)(Map())
       case o =>
         unsupported(o, "")
     }

@@ -233,6 +233,10 @@ trait SymbolOps { self: TypeOps =>
             val newBody = outer(vars ++ f.args.map(_.toVariable), f.body)
             Forall(f.args.map(vd => vd.copy(id = varSubst(vd.id))), newBody)
 
+          case f: Exists =>
+            val newBody = outer(vars ++ f.args.map(_.toVariable), f.body)
+            Exists(f.args.map(vd => vd.copy(id = varSubst(vd.id))), newBody)
+
           case l: Lambda =>
             val newBody = outer(vars ++ l.args.map(_.toVariable), l.body)
             Lambda(l.args.map(vd => vd.copy(id = varSubst(vd.id))), newBody)
@@ -275,6 +279,10 @@ trait SymbolOps { self: TypeOps =>
     case forall: Forall =>
       val (args, body, subst) = normalizeStructure(forall.args, forall.body, true, onlySimple)
       (Forall(args, body), subst)
+
+    case exists: Exists =>
+      val (args, body, subst) = normalizeStructure(exists.args, exists.body, true, onlySimple)
+      (Exists(args, body), subst)
 
     case _ =>
       val (_, body, subst) = normalizeStructure(Seq.empty, e, false, onlySimple)
@@ -401,6 +409,8 @@ trait SymbolOps { self: TypeOps =>
     case FunctionType(from, to) =>
       uniquateClosure(i, Lambda(from.map(tpe => ValDef(FreshIdentifier("x", true), tpe)), constructExpr(0, to)))
   }
+
+  // TODO: Generalize this to handle Exists ?
 
   /** Pre-processing for solvers that handle universal quantification
     * in order to increase the precision of polarity analysis for

@@ -107,7 +107,7 @@ trait ExprOps extends GenTreeOps {
     * unrolling solver. See implementation for what this means exactly.
     */
   def isSimple(e: Expr): Boolean = !exists {
-    case (_: Assume) | (_: Forall) | (_: Lambda) | (_: Choose) |
+    case (_: Assume) | (_: Forall) | (_: Exists) | (_: Lambda) | (_: Choose) |
          (_: FunctionInvocation) | (_: Application) => true
     case _ => false
   } (e)

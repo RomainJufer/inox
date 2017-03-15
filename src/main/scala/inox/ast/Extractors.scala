@@ -44,6 +44,9 @@ trait TreeDeconstructor {
     case s.Forall(args, body) => (
       args.map(_.toVariable), Seq(body), Seq(),
       (vs, es, _) => t.Forall(vs.map(_.toVal), es.head))
+    case s.Exists(args, body) => (
+      args.map(_.toVariable), Seq(body), Seq(),
+      (vs, es, _) => t.Exists(vs.map(_.toVal), es.head))
     case s.Choose(res, pred) =>
       (Seq(res.toVariable), Seq(pred), Seq(), (vs, es, _) => t.Choose(vs.head.toVal, es.head))
 

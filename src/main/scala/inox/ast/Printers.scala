@@ -113,6 +113,9 @@ trait Printers {
     case Forall(args, e) =>
       p"\u2200${nary(args)}. $e"
 
+    case Exists(args, e) =>
+      p"\u2203${nary(args)}. $e"
+
     case Choose(res, pred) =>
       p"choose(($res) => $pred)"
 

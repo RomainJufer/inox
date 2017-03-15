@@ -180,6 +180,28 @@ trait DSL {
       body(vd1.toVariable, vd2.toVariable, vd3.toVariable, vd4.toVariable))
   }
 
+  // Exists
+  def exists(vd: ValDef)(body: Variable => Expr) = {
+    Exists(Seq(vd), body(vd.toVariable))
+  }
+
+  def exists(vd1: ValDef, vd2: ValDef)
+            (body: (Variable, Variable) => Expr) = {
+    Exists(Seq(vd1, vd2), body(vd1.toVariable, vd2.toVariable))
+  }
+
+  def exists(vd1: ValDef, vd2: ValDef, vd3: ValDef)
+            (body: (Variable, Variable, Variable) => Expr) = {
+    Exists(Seq(vd1, vd2, vd3), body(vd1.toVariable, vd2.toVariable, vd3.toVariable))
+  }
+
+  def exists(vd1: ValDef, vd2: ValDef, vd3: ValDef, vd4: ValDef)
+            (body: (Variable, Variable, Variable, Variable) => Expr) = {
+    Exists(
+      Seq(vd1, vd2, vd3, vd4),
+      body(vd1.toVariable, vd2.toVariable, vd3.toVariable, vd4.toVariable))
+  }
+
   // Choose
   def choose(res: ValDef)(pred: Variable => Expr) = Choose(res, pred(res.toVariable))
 

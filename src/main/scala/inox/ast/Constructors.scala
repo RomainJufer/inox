@@ -144,6 +144,16 @@ trait Constructors { self: Trees =>
       Forall(args.filter(vd => vars(vd.toVariable)), body)
   }
 
+  /** $encodingof simplified `exists(args, body)` (existantial quantification).
+    * @see [[Expressions.Exists Exists]]
+    */
+  def exists(args: Seq[ValDef], body: Expr): Expr = body match {
+    case BooleanLiteral(true) => BooleanLiteral(true)
+    case _ =>
+      val vars = exprOps.variablesOf(body)
+      Exists(args.filter(vd => vars(vd.toVariable)), body)
+  }
+
   /** $encodingof simplified `... + ...` (plus).
     * @see [[Expressions.Plus Plus]]
     */

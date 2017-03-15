@@ -117,6 +117,13 @@ trait Expressions { self: Trees =>
     protected def computeType(implicit s: Symbols): Type = body.getType
   }
 
+  /** $encodingof `exists(...)` (existential quantification) */
+  case class Exists(args: Seq[ValDef], body: Expr) extends Expr with CachingTyped {
+    protected def computeType(implicit s: Symbols): Type = {
+      if (body.getType == BooleanType) BooleanType else Untyped
+    }
+  }
+
   /** $encodingof `choose(...)` (returns a value satisfying the provided predicate) */
   case class Choose(res: ValDef, pred: Expr) extends Expr with CachingTyped {
     protected def computeType(implicit s: Symbols): Type = {

@@ -3,7 +3,7 @@
 package inox
 package tip
 
-import smtlib.parser.Terms.{Forall => SMTForall, Identifier => SMTIdentifier, _}
+import smtlib.parser.Terms.{Forall => SMTForall, Exists => SMTExists, Identifier => SMTIdentifier, _}
 import smtlib.parser.Commands.{Constructor => SMTConstructor, _}
 import smtlib.theories._
 import smtlib.theories.experimental._
@@ -280,7 +280,21 @@ class Printer(val program: InoxProgram, writer: Writer) extends solvers.smtlib.S
         val sym = id2sym(vd.id)
         (vd.id -> (sym: Term), SortedVar(sym, declareSort(vd.tpe)))
       }.unzip
-      Exists(param, params, toSMT(Not(body))(bindings ++ newBindings))
+      SMTExists(param, params, toSMT(Not(body))(bindings ++ newBindings))
+
+    case Exists(args, body) =>
+      val (newBindings, param +: params) = args.map { vd =>
+        val sym = id2sym(vd.id)
+        (vd.id -> (sym: Term), SortedVar(sym, declareSort(vd.tpe)))
+      }.unzip
+      SMTExists(param, params, toSMT(body)(bindings ++ newBindings))
+
+    case Not(Exists(args, body)) =>
+      val (newBindings, param +: params) = args.map { vd =>
+        val sym = id2sym(vd.id)
+        (vd.id -> (sym: Term), SortedVar(sym, declareSort(vd.tpe)))
+      }.unzip
+      SMTForall(param, params, toSMT(Not(body))(bindings ++ newBindings))
 
     case Application(caller, args) => SMTApplication(toSMT(caller), args.map(toSMT))
 

@@ -51,11 +51,15 @@ trait SolvingEvaluator extends Evaluator { self =>
 
   def onExistsInvocation(exists: Exists): Expr = {
     val asForall = Forall(exists.args, Not(exists.body))
-    BooleanLiteral(!onForallInvocation(asForall).value)
+    BooleanLiteral(!forallGet(asForall))
   }
 
   def onForallInvocation(forall: Forall): Expr = {
-    BooleanLiteral(forallCache.getOrElse(forall, {
+    BooleanLiteral(forallGet(forall))
+  }
+
+  private def forallGet(forall: Forall): Boolean = {
+    forallCache.getOrElse(forall, {
       val timer = ctx.timers.evaluators.forall.start()
 
       val sf = semantics.getSolver(ctx.options ++ Seq(
@@ -86,7 +90,7 @@ trait SolvingEvaluator extends Evaluator { self =>
         case _ =>
           throw new RuntimeException("Failed to evaluate forall " + forall.asString)
       }
-    }))
-  }
+    })
+  } 
 }
 

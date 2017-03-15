@@ -14,7 +14,7 @@ import scala.collection.mutable.{Map => MutableMap}
   * @define encodingof Encoding of
   */
 trait SymbolOps { self: TypeOps =>
-  import trees._
+  import trees.{exists => _, _}
   import trees.exprOps._
   import symbols._
 

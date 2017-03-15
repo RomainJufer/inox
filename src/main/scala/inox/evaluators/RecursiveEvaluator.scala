@@ -472,6 +472,10 @@ trait RecursiveEvaluator
       replaceFromSymbols(variablesOf(f).map(v => v -> e(v)).toMap, f).asInstanceOf[Forall]
     }
 
+    case f: Exists => onExistsInvocation {
+      replaceFromSymbols(variablesOf(f).map(v => v -> e(v)).toMap, f).asInstanceOf[Exists]
+    }
+
     case c: Choose =>
       rctx.getChoose(c.res.id) match {
         case Some(expr) => e(expr)(rctx.withoutChoose(c.res.id), gctx)

@@ -49,6 +49,11 @@ trait SolvingEvaluator extends Evaluator { self =>
     }
   })
 
+  def onExistsInvocation(exists: Exists): Expr = {
+    val asForall = Forall(exists.args, Not(exists.body))
+    BooleanLiteral(!onForallInvocation(asForall).value)
+  }
+
   def onForallInvocation(forall: Forall): Expr = {
     BooleanLiteral(forallCache.getOrElse(forall, {
       val timer = ctx.timers.evaluators.forall.start()

@@ -49,6 +49,7 @@ trait SymbolOps { self: TypeOps =>
   /** Normalizes the expression expr */
   def normalizeExpression(expr: Expr): Expr = {
     def rec(e: Expr): Option[Expr] = e match {
+
       case TupleSelect(Let(id, v, b), ts) =>
         Some(Let(id, v, tupleSelect(b, ts, true)))
 
@@ -252,7 +253,7 @@ trait SymbolOps { self: TypeOps =>
             Forall(f.args.map(vd => vd.copy(id = varSubst(vd.id))), newBody)
 
           case f: Exists =>
-            val newBody = outer(vars ++ f.args.map(_.toVariable), f.body)
+            val newBody = outer(vars ++ f.args.map(_.toVariable), f.body, false)
             Exists(f.args.map(vd => vd.copy(id = varSubst(vd.id))), newBody)
 
           case l: Lambda =>
@@ -299,7 +300,7 @@ trait SymbolOps { self: TypeOps =>
       (Forall(args, body), subst)
 
     case exists: Exists =>
-      val (args, body, subst) = normalizeStructure(exists.args, exists.body, true, onlySimple)
+      val (args, body, subst) = normalizeStructure(exists.args, exists.body, true, onlySimple, false)
       (Exists(args, body), subst)
 
     case _ =>
@@ -427,8 +428,6 @@ trait SymbolOps { self: TypeOps =>
     case FunctionType(from, to) =>
       uniquateClosure(i, Lambda(from.map(tpe => ValDef(FreshIdentifier("x", true), tpe)), constructExpr(0, to)))
   }
-
-  // TODO: Generalize this to handle Exists ?
 
   /** Pre-processing for solvers that handle universal quantification
     * in order to increase the precision of polarity analysis for
